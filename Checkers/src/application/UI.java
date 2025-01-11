@@ -3,6 +3,7 @@ package application;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import checkers.CheckersMatch;
 import checkers.CheckersPiece;
 import checkers.CheckersPosition;
 import checkers.Color;
@@ -54,6 +55,13 @@ public class UI {
             System.out.println();
         }
         System.out.println("  a b c d e f g h");
+    }
+
+    public static void printMatch(CheckersMatch checkersMatch) {
+        printBoard(checkersMatch.getPieces());
+        System.out.println();
+        System.out.println("Turn : " + checkersMatch.getTurn());
+        System.out.println("Waiting player: " + checkersMatch.getCurrentPlayer());
     }
 
     public static void printBoard(CheckersPiece[][] pieces, boolean[][] possibleMoves) {
