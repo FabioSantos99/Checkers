@@ -49,7 +49,8 @@ public class CheckersMatch {
         Position target = targetPosition.toPosition();
         validateSourcePosition(source);
         validateTargetPosition(source, target);
-        Piece capturedPiece = makeMove(source, target);
+        CheckersPiece capturedPiece = null;
+
         nextTurn();
         CheckersPiece movedPiece = (CheckersPiece) board.piece(target);
 
@@ -60,13 +61,13 @@ public class CheckersMatch {
                 
                         }
                 
-                        return (CheckersPiece)capturedPiece;
+                        return capturedPiece;
                     }
                 
                 
                     
         
-                    private Piece makeMove(Position source, Position target) {
+    private Piece makeMove(Position source, Position target) {
         Piece p = board.removePiece(source);
         Piece capturedPiece = board.removePiece(target);
         board.placePiece(p, target);
@@ -82,62 +83,9 @@ public class CheckersMatch {
             throw new CheckersException("The chosen piece is not yours");
         }
 
-        if (!board.piece(position).isThereAnyPossibleMove()) {
-            throw new CheckersException("There is no possible moves for the chosen piece");
-        }
-
-        if (anyCaptureAvailable() && !isCaptureMove(position, position)) {
-            throw new CheckersException("You must capture an opponent piece");
-        }
+       
     }
 
-    private boolean anyCaptureAvailable() {
-        // Check the board for any piece that can capture
-        for (int i = 0; i < board.getRows(); i++) {
-            for (int j = 0; j < board.getColumns(); j++) {
-                Position pos = new Position(i, j);
-                if (board.thereIsAPiece(pos) && board.piece(pos).isThereAnyPossibleMove()) {
-                    if (canCapture(pos)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean canCapture(Position source) {
-        boolean[][] moves = board.piece(source).possibleMoves();
-        for (int i = 0; i < moves.length; i++) {
-            for (int j = 0; j < moves[i].length; j++) {
-                if (moves[i][j]) {
-                    Position target = new Position(i, j);
-                    if (isCaptureMove(source, target)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean isCaptureMove(Position source, Position target) {
-        int rowDiff = Math.abs(source.getRow() - target.getRow());
-        int colDiff = Math.abs(source.getColumn() - target.getColumn());
-        if (rowDiff == 2 && colDiff == 2) {
-            // Check for an opponent piece between source and target
-            int midRow = (source.getRow() + target.getRow()) / 2;
-            int midCol = (source.getColumn() + target.getColumn()) / 2;
-            Position midPosition = new Position(midRow, midCol);
-    
-            // Ensure there's an opponent piece in the middle
-            if (board.thereIsAPiece(midPosition)) {
-                Piece midPiece = board.piece(midPosition);
-                return midPiece != null && ((CheckersPiece) midPiece).getColor() != ((CheckersPiece) board.piece(source)).getColor();
-            }
-        }
-        return false;
-    }
 
     private void validateTargetPosition(Position source, Position target) {
 
