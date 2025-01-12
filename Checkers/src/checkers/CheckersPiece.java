@@ -21,4 +21,8 @@ public abstract class CheckersPiece extends Piece {
 		CheckersPiece p = (CheckersPiece)getBoard().piece(position);
 		return p != null && p.getColor() != color;
 	}
+
+	public Board getBoard() {
+		return (Board) super.getBoard();
+	}
 }
