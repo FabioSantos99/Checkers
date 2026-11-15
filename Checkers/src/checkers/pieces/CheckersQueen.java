@@ -20,49 +20,28 @@ public class CheckersQueen extends CheckersPiece {
     public boolean[][] possibleMoves() {
         boolean[][] mat = new boolean[getBoard().getRows()][getBoard().getColumns()];
 
-        Position p = new Position(0,0);
+        // As 4 diagonais: superior esquerda, superior direita, inferior esquerda, inferior direita
+        int[][] directions = { {-1, -1}, {-1, 1}, {1, -1}, {1, 1} };
 
-         // Movimentos diagonais (superior esquerda)
-         p.setValues(position.getRow() - 1, position.getColumn() - 1);
-         while (getBoard().positionExists(p) && !getBoard().thereIsAPiece(p)) {
-             mat[p.getRow()][p.getColumn()] = true;
-             p.setValues(p.getRow() - 1, p.getColumn() - 1);
-         }
-         if (getBoard().positionExists(p) && isThereOpponentPiece(p)) {
-             mat[p.getRow()][p.getColumn()] = true;
-         }
- 
-         // Movimentos diagonais (superior direita)
-         p.setValues(position.getRow() - 1, position.getColumn() + 1);
-         while (getBoard().positionExists(p) && !getBoard().thereIsAPiece(p)) {
-             mat[p.getRow()][p.getColumn()] = true;
-             p.setValues(p.getRow() - 1, p.getColumn() + 1);
-         }
-         if (getBoard().positionExists(p) && isThereOpponentPiece(p)) {
-             mat[p.getRow()][p.getColumn()] = true;
-         }
- 
-         // Movimentos diagonais (inferior esquerda)
-         p.setValues(position.getRow() + 1, position.getColumn() - 1);
-         while (getBoard().positionExists(p) && !getBoard().thereIsAPiece(p)) {
-             mat[p.getRow()][p.getColumn()] = true;
-             p.setValues(p.getRow() + 1, p.getColumn() - 1);
-         }
-         if (getBoard().positionExists(p) && isThereOpponentPiece(p)) {
-             mat[p.getRow()][p.getColumn()] = true;
-         }
- 
-         // Movimentos diagonais (inferior direita)
-         p.setValues(position.getRow() + 1, position.getColumn() + 1);
-         while (getBoard().positionExists(p) && !getBoard().thereIsAPiece(p)) {
-             mat[p.getRow()][p.getColumn()] = true;
-             p.setValues(p.getRow() + 1, p.getColumn() + 1);
-         }
-         if (getBoard().positionExists(p) && isThereOpponentPiece(p)) {
-             mat[p.getRow()][p.getColumn()] = true;
-         }
- 
-         return mat;
+        for (int[] d : directions) {
+            Position p = new Position(position.getRow() + d[0], position.getColumn() + d[1]);
 
+            // Movimento livre pela diagonal
+            while (getBoard().positionExists(p) && !getBoard().thereIsAPiece(p)) {
+                mat[p.getRow()][p.getColumn()] = true;
+                p.setValues(p.getRow() + d[0], p.getColumn() + d[1]);
+            }
+
+            // Captura: peca adversaria seguida de casa(s) vazia(s)
+            if (getBoard().positionExists(p) && isThereOpponentPiece(p)) {
+                p.setValues(p.getRow() + d[0], p.getColumn() + d[1]);
+                while (getBoard().positionExists(p) && !getBoard().thereIsAPiece(p)) {
+                    mat[p.getRow()][p.getColumn()] = true;
+                    p.setValues(p.getRow() + d[0], p.getColumn() + d[1]);
+                }
+            }
+        }
+
+        return mat;
     }
 }
