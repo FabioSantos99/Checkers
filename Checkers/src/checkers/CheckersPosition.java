@@ -28,7 +28,7 @@ public class CheckersPosition {
     }
 
     protected static CheckersPosition fromPosition(Position position) {
-        return new CheckersPosition((char)('a' - position.getColumn()), 8 - position.getRow());
+        return new CheckersPosition((char)('a' + position.getColumn()), 8 - position.getRow());
     }
 
     @Override

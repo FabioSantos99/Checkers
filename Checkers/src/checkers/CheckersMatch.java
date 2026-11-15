@@ -49,29 +49,38 @@ public class CheckersMatch {
         Position target = targetPosition.toPosition();
         validateSourcePosition(source);
         validateTargetPosition(source, target);
-        CheckersPiece capturedPiece = null;
+        Piece capturedPiece = makeMove(source, target);
 
-        nextTurn();
         CheckersPiece movedPiece = (CheckersPiece) board.piece(target);
 
         // CheckersQueen Promotion
-        if (movedPiece.getColor() == Color.WHITE && target.getRow() == 0 || movedPiece.getColor() == Color.BLACK && target.getRow() == board.getRows() - 1) {
-                            board.removePiece(target);
-                            board.placePiece(new CheckersQueen(board, movedPiece.getColor()), target);
-                
-                        }
-                
-                        return capturedPiece;
-                    }
-                
-                
-                    
-        
+        if (movedPiece instanceof PieceGame
+                && (movedPiece.getColor() == Color.WHITE && target.getRow() == 0
+                    || movedPiece.getColor() == Color.BLACK && target.getRow() == board.getRows() - 1)) {
+            board.removePiece(target);
+            board.placePiece(new CheckersQueen(board, movedPiece.getColor()), target);
+        }
+
+        nextTurn();
+        return (CheckersPiece) capturedPiece;
+    }
+
     private Piece makeMove(Position source, Position target) {
         Piece p = board.removePiece(source);
-        Piece capturedPiece = board.removePiece(target);
         board.placePiece(p, target);
-        return capturedPiece;
+
+        // Na damas a peca capturada fica ENTRE a origem e o destino (na mesma diagonal).
+        // Percorre as casas intermediarias e remove a peca adversaria encontrada.
+        int rowStep = Integer.signum(target.getRow() - source.getRow());
+        int columnStep = Integer.signum(target.getColumn() - source.getColumn());
+        Position aux = new Position(source.getRow() + rowStep, source.getColumn() + columnStep);
+        while (aux.getRow() != target.getRow()) {
+            if (board.thereIsAPiece(aux)) {
+                return board.removePiece(aux);
+            }
+            aux.setValues(aux.getRow() + rowStep, aux.getColumn() + columnStep);
+        }
+        return null;
     }
 
     private void validateSourcePosition(Position position) {
